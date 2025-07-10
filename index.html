@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy Birthday, My Moon 🌙</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Roboto&display=swap');
+    body, html {
+      margin: 0; padding: 0; height: 100%;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+      overflow-x: hidden;
+      font-family: 'Roboto', sans-serif;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #stars {
+      position: fixed;
+      top:0; left:0; width:100%; height:100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 600px;
+      padding: 20px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 20px;
+      box-shadow: 0 0 15px #3b4a64;
+      text-align: center;
+    }
+    h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3.5rem;
+      margin-bottom: 0.2em;
+      color: #ffccdd;
+      text-shadow: 0 0 10px #ff9cd4;
+    }
+    #message {
+      font-size: 1.2rem;
+      min-height: 150px;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+    }
+    #btnOpenGift, #btnFinalGift {
+      font-size: 1.3rem;
+      background: linear-gradient(45deg, #ff70a6, #fca311);
+      border: none;
+      padding: 12px 30px;
+      border-radius: 30px;
+      cursor: pointer;
+      color: white;
+      box-shadow: 0 0 8px #fca311;
+      transition: background 0.3s ease;
+      margin: 10px auto;
+    }
+    #btnOpenGift:hover, #btnFinalGift:hover {
+      background: linear-gradient(45deg, #fca311, #ff70a6);
+    }
+    #giftBox {
+      margin-top: 30px;
+      cursor: pointer;
+      width: 150px;
+      height: 150px;
+      background: url('gift.jpg') no-repeat center/contain;
+      margin-left: auto;
+      margin-right: auto;
+      display: none;
+    }
+    #giftModal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0; top: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      align-items: center;
+      justify-content: center;
+    }
+    #giftModal img {
+      max-width: 90%;
+      max-height: 80vh;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #ff70a6;
+    }
+    #galleryHeading {
+      font-size: 1.2rem;
+      color: #ffccdd;
+      margin-top: 30px;
+      display: none;
+    }
+    #gallery {
+      margin-top: 15px;
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+    .gallery-item {
+      width: 90px;
+      height: 90px;
+      background: #222;
+      border-radius: 15px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 0 10px #fca311;
+      transition: transform 0.3s ease;
+    }
+    .gallery-item:hover {
+      transform: scale(1.1);
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #finalMessage {
+      margin-top: 20px;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: #ffcce5;
+      display: none;
+    }
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="container">
+  <h1>Happy Birthday, My Moon 🌙</h1>
+  <div id="message"></div>
+
+  <button id="btnOpenGift">Click to Open Gift 🎁</button>
+
+  <div id="giftBox" title="Open your gift"></div>
+
+  <div id="galleryHeading">💖 Let’s look at some of your beautiful old memories...</div>
+
+  <div id="gallery">
+    <div class="gallery-item"><img src="photo1" alt="Memory 1" /></div>
+    <div class="gallery-item"><img src="photo2.jpg" alt="Memory 2" /></div>
+    <div class="gallery-item"><img src="photo3.jpg" alt="Memory 3" /></div>
+    <div class="gallery-item"><img src="photo4.jpg" alt="Memory 4" /></div>
+    <div class="gallery-item"><img src="photo5.jpg" alt="Memory 5" /></div>
+  </div>
+
+  <button id="btnFinalGift">💝 Now... Receive Your Birthday Gift!</button>
+
+  <div id="finalMessage">
+    স্পেশাল গিফট কি চান আমি ওইত আপনার স্পেশাল গিফট .<br>
+    থাক যেহেতু চাচ্ছেন এই নেন আমার মন এটা নিয়া জান.<br>
+    — From: Batasi 💗
+  </div>
+</div>
+
+<div id="giftModal">
+  <img src="gift.jpg" alt="Special Gift" />
+</div>
+
+<audio id="bgMusic" src="https://cdn.pixabay.com/download/audio/2021/11/01/audio_5e4c6b9c5b.mp3?filename=birthday-music-14878.mp3" loop autoplay></audio>
+
+<script>
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let w, h;
+  let stars = [];
+  function random(min, max) { return Math.random() * (max - min) + min; }
+  function initStars() {
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = w;
+    canvas.height = h;
+    stars = [];
+    for (let i = 0; i < 150; i++) {
+      stars.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        radius: Math.random() * 1.2 + 0.2,
+        alpha: Math.random(),
+        dAlpha: (Math.random() * 0.02 + 0.005),
+      });
+    }
+  }
+  function drawStars() {
+    ctx.clearRect(0, 0, w, h);
+    stars.forEach(star => {
+      star.alpha += star.dAlpha;
+      if (star.alpha <= 0 || star.alpha >= 1) star.dAlpha = -star.dAlpha;
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, 2 * Math.PI);
+      ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+      ctx.shadowColor = 'rgba(255,255,255,0.8)';
+      ctx.shadowBlur = 4;
+      ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+  window.addEventListener('resize', () => initStars());
+  initStars();
+  drawStars();
+
+  const messageText = 
+`Happy Birthday, My Moon 🌙
+You are the light in my darkest nights, the calm in my storms.
+Today is your day, and I just want to say...
+I’m lucky the universe give me you.
+
+Happy Birthday, my Moon. I love you always.
+
+— From: Batasi`;
+
+  const messageEl = document.getElementById('message');
+  const btnOpenGift = document.getElementById('btnOpenGift');
+  const giftBox = document.getElementById('giftBox');
+  const giftModal = document.getElementById('giftModal');
+  const gallery = document.getElementById('gallery');
+  const galleryHeading = document.getElementById('galleryHeading');
+  const btnFinalGift = document.getElementById('btnFinalGift');
+  const finalMessage = document.getElementById('finalMessage');
+
+  function typeWriter(text, i = 0, callback) {
+    if (i < text.length) {
+      messageEl.textContent += text.charAt(i);
+      setTimeout(() => typeWriter(text, i + 1, callback), 40);
+    } else if (callback) callback();
+  }
+
+  btnOpenGift.addEventListener('click', () => {
+    btnOpenGift.style.display = 'none';
+    messageEl.textContent = '';
+    typeWriter(messageText, 0, () => {
+      giftBox.style.display = 'block';
+      gallery.style.display = 'flex';
+      galleryHeading.style.display = 'block';
+      btnFinalGift.style.display = 'inline-block';
+    });
+  });
+
+  giftBox.addEventListener('click', () => {
+    giftModal.style.display = 'flex';
+  });
+
+  giftModal.addEventListener('click', () => {
+    giftModal.style.display = 'none';
+  });
+
+  btnFinalGift.addEventListener('click', () => {
+    finalMessage.style.display = 'block';
+  });
+</script>
+</body>
+</html>
